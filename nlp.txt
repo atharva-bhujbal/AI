@@ -1,0 +1,37 @@
+import nltk
+from nltk import pos_tag
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from collections import Counter
+import string
+
+# Download required NLTK resources (run once)
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger_eng')
+
+# Input text
+text = """
+Information retrieval is the process of obtaining relevant information from a collection of resources. 
+It is a key part of search engines, databases, and data mining systems.
+"""
+
+# Step 1: Tokenization
+tokens = word_tokenize(text)
+print("Tokenized Words:\n", tokens)
+
+# Step 2: Convert to lowercase and remove punctuation
+tokens = [word.lower() for word in tokens if word.isalnum()]
+
+# Step 3: Remove Stop Words
+stop_words = set(stopwords.words('english'))
+filtered_tokens = [word for word in tokens if word not in stop_words]
+print("\nFiltered Tokens (Stop words removed):\n", filtered_tokens)
+
+# Step 4: Count Word Frequencies
+word_freq = Counter(filtered_tokens)
+print("\nWord Frequencies:\n", word_freq)
+
+# Step 5: POS Tagging
+pos_tags = nltk.pos_tag(filtered_tokens)
+print("\nPOS Tagging:\n", pos_tags)

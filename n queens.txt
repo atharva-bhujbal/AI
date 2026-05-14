@@ -1,0 +1,64 @@
+import random
+
+class NQueens:
+    def __init__(self, n):
+        self.n = n
+        self.board = [random.randint(0, n-1) for _ in range(n)]  # Random initial solution (one queen per column)
+
+    # Function to evaluate the number of conflicts
+    def evaluate(self, board):
+        conflicts = 0
+        for i in range(self.n):
+            for j in range(i + 1, self.n):
+                # Check if queens i and j are attacking each other
+                if board[i] == board[j] or abs(board[i] - board[j]) == abs(i - j):
+                    conflicts += 1
+        return conflicts
+
+    # Generate neighboring solutions by moving one queen to a different row in the same column
+    def get_neighbors(self, board):
+        neighbors = []
+        for col in range(self.n):
+            for row in range(self.n):
+                if row != board[col]:
+                    neighbor = board[:]
+                    neighbor[col] = row
+                    neighbors.append(neighbor)
+        return neighbors
+
+    # Hill climbing algorithm to solve N-Queens
+    def hill_climbing(self):
+        current = self.board
+        while True:
+            neighbors = self.get_neighbors(current)
+            if not neighbors:
+                break
+            
+            # Find the neighbor with the least conflicts (greedy choice)
+            next_state = min(neighbors, key=lambda state: self.evaluate(state))
+            current_conflicts = self.evaluate(current)
+            next_conflicts = self.evaluate(next_state)
+            
+            # If no improvement, we've reached a local optimum
+            if next_conflicts >= current_conflicts:
+                break
+            
+            current = next_state  # Move to the better neighbor
+
+        return current
+
+
+
+if __name__ == "__main__":
+    n = 8  # For an 8x8 board (8-Queens problem)
+    nqueens = NQueens(n)
+    
+    print(f"Initial Board: {nqueens.board}")
+    solution = nqueens.hill_climbing()
+    
+    print("\nFinal Board after Hill Climbing:")
+    for row in range(n):
+        row_rep = ['Q' if col == solution[row] else '.' for col in range(n)]
+        print(' '.join(row_rep))
+
+    print("\nConflicts in the final solution:", nqueens.evaluate(solution))
